@@ -21,8 +21,17 @@
     "@angular/platform-browser": "^5.0.0",
     "@angular/platform-browser-dynamic": "^5.0.0",
     "@angular/router": "^5.0.0",
+    "@types/socket.io-client": "^1.4.32",
+    "body-parser": "^1.18.2",
     "core-js": "^2.4.1",
+    "express": "^4.16.2",
+    "mongodb": "^2.2.31",
+    "request-ip": "^2.0.2",
+    "rpi-ws281x-native": "^0.8.2",
     "rxjs": "^5.5.2",
+    "socket.io": "^2.0.4",
+    "socket.io-client": "^2.0.4",
+    "socketio": "^1.0.0",
     "zone.js": "^0.8.14"
   },
   "devDependencies": {

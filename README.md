@@ -1,4 +1,6 @@
-# MeanApp
+<!-- Badges section here. -->
+[![node version](https://img.shields.io/badge/Node-v9.3.0-1cc401.svg)
+# LightUp
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.6.1.
 

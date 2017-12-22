@@ -1,0 +1,18 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-4">
+      <h3>Set Alarm</h3>
+      <p>Select time</p>
+        <input type="time" name="usr_time">
+    </div>
+    <div class="col-sm-4">
+      <h3>Select color</h3>
+        <input [(ngModel)]="colorValue" type="color" (change)="sendColor()" id="pickColor" value="#ff0000">
+    </div>
+    <div class="col-sm-4">
+      <h3>Test light</h3>
+      <p>Click</p>
+      <input [(ngModel)]="lightValue" type="checkbox" (change)="sendLight()">LED
+    </div>
+  </div>
+</div>
