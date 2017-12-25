@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import * as io from "socket.io-client";
 
 @Component({
   selector: 'app-home',
@@ -6,10 +7,10 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
-
-  constructor() { }
+  
+  // Create an instance of the DataService through dependency injection
+  constructor() {}
 
   ngOnInit() {
   }
-
 }

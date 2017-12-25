@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const http = require('http');
 const app = express();
+
 var server = http.createServer(app);
 var socketIO = require('socket.io');
 var io = socketIO(server);
@@ -10,6 +11,7 @@ const ws281x = require('../SmartAlarm/node_modules/rpi-ws281x-native/lib/ws281x-
 
 // API file for interacting with MongoDB
 const api = require('./server/routes/api');
+const alarm = require('./server/model/alarms');
 
 //Variables for LedRing
 var NUM_LEDS = 16, //Number of leds
@@ -71,7 +73,7 @@ app.use(bodyParser.urlencoded({ extended: false}));
 app.use(express.static(path.join(__dirname, 'dist')));
 
 // API location
-app.use('/api', api);
+app.use('/', api);
 
 // Send all other requests to the Angular app
 app.get('*', (req, res) => {

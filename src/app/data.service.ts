@@ -1,7 +1,18 @@
 import { Injectable } from '@angular/core';
 import { Http, Headers, RequestOptions } from '@angular/http';
+import { Observable } from 'rxjs/Observable';
+import { Subject } from 'rxjs/Subject';
+import { Alarm } from './model/alarm';
 import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/catch';
 import * as io from 'socket.io-client';
+
+
+let users= [
+{name: 'lucia'}
+];
+
+
 
 @Injectable()
 export class DataService {
@@ -18,6 +29,17 @@ export class DataService {
   getUsers() {
     return this._http.get("/api/users")
       .map(result => this.result = result.json().data);
+  }
+
+  insertNewAlarm(alarm:Alarm): Observable<any>{
+        return this._http.post(this.url + "/insertAlarm", alarm)
+            .map((res:any) => {
+                return res.json();
+            })
+            .catch((error:any) => {
+		console.log(error);
+                return Observable.throw(error.json ? error.json().error : error || 'Server error')
+            }); 
   }
 
   public sendColor(data){

@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
 import {FormsModule} from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
+import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 
 // Import the Http Module and our Data Service
 import { HttpModule } from '@angular/http';
@@ -22,6 +23,7 @@ import { HomeComponent } from './components/home/home.component';
     HomeComponent
   ],
   imports: [
+    NgbModule.forRoot(),
     BrowserModule,
     HttpModule,              // <-Add HttpModule
     FormsModule,

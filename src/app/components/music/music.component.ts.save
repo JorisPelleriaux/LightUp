@@ -1,0 +1,24 @@
+import { Component, OnInit } from '@angular/core';
+import { DataService } from '../../data.service';
+
+@Component({
+  selector: 'app-music',
+  templateUrl: './music.component.html',
+  styleUrls: ['./music.component.css'],
+  providers: [DataService]
+})
+export class MusicComponent implements OnInit {
+
+  constructor(private dataService: DataService) { }
+  ngOnInit() {
+  }
+
+private newTodo;
+addTodo(){
+  this.dataService.add({ name: this.newTodo }).then(() => {
+    return this.getTodos();
+  }).then(() => {
+    this.newTodo = ''; // clear input form value
+  });
+}
+}
