@@ -6,3 +6,10 @@ div.addAlarm{
     position: relative;
     left: 20px;
 }
+#alarmFrame{
+    border:1px solid black;
+}
+#time{
+  padding-top: 30px;
+  padding-bottom: 30px;
+}

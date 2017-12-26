@@ -14,6 +14,9 @@ var url = "mongodb://localhost:27017/mean";
 var res = [];
 var cron = require('node-cron');
 var myVariables = [];
+const brightness = require('../animations/brightness');
+const iterate = require('../animations/iterate');
+const rainbow = require('../animations/rainbow');
 
 //Variables for LedRing
 var NUM_LEDS = 16, //Number of leds
@@ -46,14 +49,51 @@ function createTimers(){
   db.collection("alarms").find({}).toArray(function(err, result) {
     if (err) throw err;
     for (var x = 0;x<result.length;x++){
-      var name = result[x]._id;
-      var time = result[x].waketime.split(':')
-      myVariables[name] = cron.schedule(`${time[1]} ${time[0]} * * *`, function() {
-        console.log('timer started');
-        LedsOn();
-      }, true);
+      var data = result[x];
+      var name = data._id;
+      var color = data.color;
+      var active = data.active;  
+      var time = data.waketime.split(':')
+      var h = parseInt(time[0], 10);
+      var m = parseInt(time[1], 10);
+      switch(color) {
+      case "brightness":
+	  if (active == true){
+            myVariables[name] = cron.schedule(`${m} ${h} * * *`, function() {
+              console.log('brightness started'+active);
+              brightness.run();
+            }, true);
+          console.log(`${x}'ste alarm om ${h}:${m}, id: ${name}, animatie: brightness en active: ${active}`);
+	  }
+          break;
+      case "iterate":
+  	  if (active == true){        
+	    myVariables[name] = cron.schedule(`${m} ${h} * * *`, function() {
+              console.log('iterate started'+active);
+              iterate.run();
+            }, true);
+	  console.log(`${x}'ste alarm om ${h}:${m}, id: ${name}, animatie: iterate en active: ${active}`);
+   	  }
+          break;
+      case "rainbow":
+	  if (active == true){
+            myVariables[name] = cron.schedule(`${m} ${h} * * *`, function() {
+              console.log('rainbow started'+active);
+              rainbow.run();
+            }, true);
+ 	  console.log(`${x}'ste alarm om ${h}:${m}, id: ${name}, animatie: rainbow en active: ${active}`);
+          }
+          break;
+      default:
+	  if (active == true){
+            myVariables[name] = cron.schedule(`${m} ${h} * * *`,function() {
+              console.log('default started');
+              rainbow.run();
+            }, true);
+	  console.log(`${x}'ste alarm om ${h}:${m}, id: ${name}, animatie: default en active: ${active}`);
+   	  }
+      }
     }
-    console.log("aantal alarms: " + myVariables.length);
     db.close();
     });
   })
@@ -128,11 +168,7 @@ router.post('/insertAlarm', function(req, res, next) {
   });
 
   //start new cron timer
-  var time = newAlarm.waketime.split(':')
-  myVariables[newAlarm._id] = cron.schedule(`${time[1]} ${time[0]} * * *`, function() {
-    console.log('timer started');
-    LedsOn();
-    }, true);
+  createTimers();
 console.log("insert alarm, id: " + newAlarm._id);
 
 });
@@ -155,9 +191,11 @@ const index = myVariables.indexOf(req.body.id);
 myVariables.splice(index, 1);
 
 //stop cron
+if (req.body.active == true){
 myVariables[req.body.id].stop();
 
 console.log("delete alarm, id: " + req.body.id);
+}
 });
 
 //Update alarm

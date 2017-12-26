@@ -19,7 +19,7 @@ export class AlarmsComponent implements OnInit {
   newAlarm: Alarm;
   editAlarm: Alarm;
   searchCriteria: string;
-
+  selectedAnimation: string = 'brightness';
   private _success = new Subject<string>();
 
   staticAlertClosed = false;
@@ -50,8 +50,15 @@ export class AlarmsComponent implements OnInit {
     this.editAlarm = Alarm.CreateDefault();
   }
 
+  //event handler for the select element's change event
+  selectChangeHandler (event: any) {
+    //update the ui
+    this.selectedAnimation = event.target.value;
+  }
+
   insertAlarm() {
     this._success.next("New alarm added");
+    this.newAlarm.color = this.selectedAnimation;
     this.isCollapsed = true;
     this.dataService
     .insertNewAlarm(this.newAlarm)
