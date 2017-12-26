@@ -1,8 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import {NgbTimeStruct} from '@ng-bootstrap/ng-bootstrap';
 import {NgbTimepickerConfig} from '@ng-bootstrap/ng-bootstrap';
-import {DataService} from '../../data.service';
+import {Subject} from 'rxjs/Subject';
+import {debounceTime} from 'rxjs/operator/debounceTime';
 import { Router } from '@angular/router';
+
+import {DataService} from '../../data.service';
 import { Alarm } from '../../model/alarm';
 
 @Component({
@@ -14,6 +17,14 @@ import { Alarm } from '../../model/alarm';
 export class AlarmsComponent implements OnInit {
   alarms: Alarm[];
   newAlarm: Alarm;
+  editAlarm: Alarm;
+  searchCriteria: string;
+
+  private _success = new Subject<string>();
+
+  staticAlertClosed = false;
+  successMessage: string;
+
 
   public isCollapsed = true;	//Add alarm menu
   time: NgbTimeStruct = {hour: 8, minute: 0, second: 30};	//Time input
@@ -28,11 +39,20 @@ export class AlarmsComponent implements OnInit {
     config.spinners = false;
   }
   ngOnInit() {
+    setTimeout(() => this.staticAlertClosed = true, 20000);
+
+    this._success.subscribe((message) => this.successMessage = message);
+    debounceTime.call(this._success, 5000).subscribe(() => this.successMessage = null);
+
+    this.searchCriteria = '';
+    this.getAlarms();
     this.newAlarm = Alarm.CreateDefault();
+    this.editAlarm = Alarm.CreateDefault();
   }
 
   insertAlarm() {
-    console.log("in methode");
+    this._success.next("New alarm added");
+    this.isCollapsed = true;
     this.dataService
     .insertNewAlarm(this.newAlarm)
     .subscribe(
@@ -44,10 +64,51 @@ export class AlarmsComponent implements OnInit {
          console.log("Added alarm.");
       }
     )
-}
+  }
 
-  submit() {
-     console.log("submit");
-     this.isCollapsed = false;
+  getAlarms(){
+    this.dataService.getAlarms(this.searchCriteria)
+    .subscribe(
+      data => {
+         this.alarms = [];
+         data.forEach(
+           element => {
+             var newAlarm = new Alarm(element._id, 
+                                element.active, 
+                                element.waketime,
+                                element.duration,
+                                element.color);
+             this.alarms.push(newAlarm);
+           })
+      })
+  }
+
+  deleteAlarm(alarm:Alarm)
+  {
+    this._success.next("Alarm successfully deleted");
+    this.dataService.deleteAlarm(alarm)
+    .subscribe(
+      data => {
+        this.alarms.splice(this.alarms.indexOf(alarm), 1);
+        console.log("Alarm deleted!");
+      })
+  }
+
+  updateAlarm(alarm:Alarm) {
+    this.dataService
+    .updateAlarm(this.newAlarm)
+    .subscribe(
+      data => {
+         var index = this.alarms.findIndex(item => item._id === this.editAlarm._id);
+         this.alarms[index] = this.editAlarm;
+         this.editAlarm = Alarm.CreateDefault();
+    
+         console.log("Added alarm.");
+      }
+    )
+  }
+
+  setEditAlarm(alarm: Alarm){
+    this.editAlarm = new Alarm(alarm._id, alarm.active, alarm.waketime, alarm.duration, alarm.color);
   }
 }

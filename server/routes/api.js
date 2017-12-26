@@ -9,6 +9,55 @@ var mongoose = require('mongoose'); //mongo connection
 var bodyParser = require('body-parser'); //parses information from POST
 var methodOverride = require('method-override'); //used to manipulate POST
 var Alarm = require('../model/alarms');
+const ws281x = require('../../node_modules/rpi-ws281x-native/lib/ws281x-native');
+var url = "mongodb://localhost:27017/mean";
+var res = [];
+var cron = require('node-cron');
+var myVariables = [];
+
+//Variables for LedRing
+var NUM_LEDS = 16, //Number of leds
+pixelData = new Uint32Array(NUM_LEDS);
+var ColorString = "0xffcc22";
+
+const options = {
+  dma: 5,
+  freq: 800000,
+  gpio: 12,
+  invert: false,
+  brightness: 150
+};
+
+ws281x.init(NUM_LEDS,options);  //call init function
+
+function LedsOn(){
+for(var i = 0; i < NUM_LEDS; i++) {
+    pixelData[i] = "0x00ff00";
+}
+ws281x.render(pixelData);
+
+}
+
+
+function createTimers(){
+  myVariables = [];
+  MongoClient.connect(url, function(err, db) {
+  if (err) throw err;
+  db.collection("alarms").find({}).toArray(function(err, result) {
+    if (err) throw err;
+    for (var x = 0;x<result.length;x++){
+      var name = result[x]._id;
+      var time = result[x].waketime.split(':')
+      myVariables[name] = cron.schedule(`${time[1]} ${time[0]} * * *`, function() {
+        console.log('timer started');
+        LedsOn();
+      }, true);
+    }
+    console.log("aantal alarms: " + myVariables.length);
+    db.close();
+    });
+  })
+}
 
 // socket io
 io.on('connection', function (socket) {
@@ -44,6 +93,9 @@ let response = {
 // Get all alarms
 router.get('/getAlarms', function(req, res, next) {
   var searchQuery = {};
+  
+  //load alarms from DB and create cron for it
+  createTimers();
 
   if(req.query.name)
     searchQuery = { active: req.query.active };
@@ -74,6 +126,15 @@ router.post('/insertAlarm', function(req, res, next) {
     console.log("saved!");
     res.send({ id : newAlarm._id });
   });
+
+  //start new cron timer
+  var time = newAlarm.waketime.split(':')
+  myVariables[newAlarm._id] = cron.schedule(`${time[1]} ${time[0]} * * *`, function() {
+    console.log('timer started');
+    LedsOn();
+    }, true);
+console.log("insert alarm, id: " + newAlarm._id);
+
 });
 
 //Delete alarm
@@ -88,6 +149,15 @@ router.post('/deleteAlarm', function(req, res, next) {
     console.log("removed!");
     res.send({status: 'ok'});
   });
+
+//delete cron from array
+const index = myVariables.indexOf(req.body.id);
+myVariables.splice(index, 1);
+
+//stop cron
+myVariables[req.body.id].stop();
+
+console.log("delete alarm, id: " + req.body.id);
 });
 
 //Update alarm
@@ -104,6 +174,8 @@ router.post('/updateAlarm', function(req, res, next) {
     console.log("updated!");
     res.send({status: 'ok'});
   });
+//load alarms from DB and create cron for it
+  createTimers();
 });
 
 module.exports = router;

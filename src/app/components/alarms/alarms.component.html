@@ -1,3 +1,5 @@
+<ngb-alert *ngIf="successMessage" type="success" (close)="successMessage = null">{{ successMessage }}</ngb-alert>
+
 <div class="addAlarm">
 <p>
   <button type="button" class="btn btn-outline-primary" (click)="isCollapsed = !isCollapsed"
@@ -18,4 +20,45 @@
 </div>
 </div>
 
+<div class="col-sm-8">
+        <div class="row">
+                <div class="col-sm-2">
+                    <label for="Active">Active</label>
+                </div>
+                <div class="col-sm-2">
+                    <label for="waketime">Wakeup time</label>
+                </div>
+                <div class="col-sm-2">
+                    <label for="Duration">Wake duration</label>
+                </div>
+                <div class="col-sm-2">
+                    <label for="Color">color</label>
+                </div>
+        </div>
+        <div class="row" *ngFor="let alarm of alarms" (click)="setEditAlarm(alarm)">
+            <div class="col-sm-2">
+                {{alarm.active}}
+            </div>
+            <div class="col-sm-2">
+                {{alarm.waketime}}
+            </div>
+            <div class="col-sm-2">
+                {{alarm.duration}}
+            </div>
+            <div class="col-sm-2">
+                {{alarm.color}}
+            </div>
+            <div class="col-sm-2">
+                <button class="btn btn-default" (click)="deleteAlarm(alarm)">Delete</button>
+            </div>
+        </div>
+<div>
 
+<div class="form-group col-sm-2">
+    <label for="editAlarm">Edit Alarm:</label>
+    <input class="form-control" type="text" placeholder="Active" [(ngModel)]="this.editAlarm.active" [ngModelOptions]="{standalone: true}"/>
+    <input class="form-control" type="text" placeholder="Waketime" [(ngModel)]="this.editAlarm.waketime" [ngModelOptions]="{standalone: true}"/>
+    <input class="form-control" type="text" placeholder="Duration" [(ngModel)]="this.editAlarm.duration" [ngModelOptions]="{standalone: true}"/>
+    <input class="form-control" type="text" placeholder="Color" [(ngModel)]="this.editAlarm.color" [ngModelOptions]="{standalone: true}"/>
+    <button class="btn btn-default" (click)="updateAlarm()"> Edit Alarm </button>
+</div>

@@ -42,6 +42,39 @@ export class DataService {
             }); 
   }
 
+  getAlarms(searchCriteria:any) : Observable<Alarm[]>{
+        let params: URLSearchParams = new URLSearchParams();
+        params.set('active', searchCriteria);
+
+        return this._http.get(this.url + "/getAlarms", { search: params })
+                .map((res:any) => {
+                    return res.json();
+                })
+                .catch((error:any) => {
+                    return Observable.throw(error.json ? error.json().error : error || 'Server error')
+                }); 
+  }
+
+  deleteAlarm(alarm:Alarm): Observable<any>{
+        return this._http.post(this.url + "/deleteAlarm", { id: alarm._id })
+        .map((res:any) => {
+            return res.json();
+        })
+        .catch((error:any) => {
+            return Observable.throw(error.json ? error.json().error : error || 'Server error')
+        });
+  }
+
+  updateAlarm(alarm:Alarm): Observable<any>{
+        return this._http.post(this.url + "/updateAlarm", alarm)
+            .map((res:any) => {
+                return res.json();
+            })
+            .catch((error:any) => {
+                return Observable.throw(error.json ? error.json().error : error || 'Server error')
+            }); 
+  }
+
   public sendColor(data){
         this.socket.emit("color", data); //send push button status to back to server
   }
