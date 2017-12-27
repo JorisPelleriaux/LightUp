@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Http, Headers, RequestOptions } from '@angular/http';
+import { Http, Headers, RequestOptions,URLSearchParams  } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import { Alarm } from './model/alarm';
@@ -87,4 +87,11 @@ export class DataService {
         this.socket.emit('new-message', message);
   }
 
+  public getTemperature = () => {
+        return Observable.create((observer) => {
+            this.socket.on('temp', (data) => {
+                observer.next(data);
+            });
+        });
+  }
 }

@@ -4,6 +4,7 @@ import { AppComponent } from './app.component';
 import {FormsModule} from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
+import { ChartsModule } from 'ng2-charts';
 
 // Import the Http Module and our Data Service
 import { HttpModule } from '@angular/http';
@@ -27,7 +28,8 @@ import { HomeComponent } from './components/home/home.component';
     BrowserModule,
     HttpModule,              // <-Add HttpModule
     FormsModule,
-    RouterModule.forRoot(appRoutes)
+    RouterModule.forRoot(appRoutes),
+    ChartsModule
   ],
   exports:  [
     RouterModule

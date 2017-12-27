@@ -1,23 +1,36 @@
 <div class="container">
   <div class="row">
-    <div class="col-sm-4">
-      <h3>Set Alarm</h3>
-      <p>Select time</p>
-	<div class='input-group date' id='datetimepicker1'>
-                    <input type='text' class="form-control" />
-                    <span class="input-group-addon">
-                        <span class="glyphicon glyphicon-calendar"></span>
-                    </span>
-                </div>
+    <h1>Active alarms</h1>
+    <div class="col-sm-4" id="alarmFrame" *ngFor="let alarm of alarms" (click)="setEditAlarm(alarm)">
+     <div class="row">
+      <div class="col-sm-6">
+	<div id="time" class="row-sm-1">
+	  <h2>{{alarm.waketime}}</h2>
+	</div>
+      </div>
+      <div class="col-sm-6">
+        <div class="row-sm-3">
+          {{alarm.active}}
+        </div>
+        <div class="row-sm-3">
+          {{alarm.duration}}
+        </div>
+        <div class="row-sm-3">
+          {{alarm.color}}
+        </div>
+      </div>
+     </div>
     </div>
     <div class="col-sm-4">
-      <h3>Select color</h3>
-        <input [(ngModel)]="colorValue" type="color" (change)="sendColor()" id="pickColor" value="#ff0000">
+      <h1>Temperature</h1>
+      {{ tempLabel }}
     </div>
     <div class="col-sm-4">
-      <h3>Test light</h3>
-      <p>Click</p>
-      <input [(ngModel)]="lightValue" type="checkbox" (change)="sendLight()">LED
+      <h1>Light</h1>
+      <p>Lorem ipsum dolor..</p>
+      <p>Ut enim ad..</p>
     </div>
   </div>
 </div>
+
+

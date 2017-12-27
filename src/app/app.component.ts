@@ -13,25 +13,31 @@ export class AppComponent {
   
   // Define a users property to hold our user data
   users: Array<any>;
-  message: string; 
+  temperature: string; 
   lightValue: boolean;
   colorValue: string;
+  temperatures: string[] = [];
 
   // Create an instance of the DataService through dependency injection
   constructor(private _dataService: DataService) {
 
     // Access the Data Service's getUsers() method we defined
-    this._dataService.getUsers()
+  this._dataService.getUsers()
         .subscribe(res => this.users = res);
   }
+
+  ngOnInit() {
+    this._dataService
+      .getTemperature()
+      .subscribe((temperature: string) => {
+        this.temperatures.push(temperature);
+      });
+  }
+
   sendColor() {
         this._dataService.sendColor(this.colorValue);
   }
   sendLight() {
 	this._dataService.sendLight(this.lightValue);
-  }
-  sendMessage() {
-	this._dataService.sendMessage(this.message);
-	this.message = '';
   }
 }

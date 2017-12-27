@@ -74,6 +74,7 @@ export class AlarmsComponent implements OnInit {
   }
 
   getAlarms(){
+    console.log("zoeken naar "+this.searchCriteria);
     this.dataService.getAlarms(this.searchCriteria)
     .subscribe(
       data => {

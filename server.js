@@ -7,11 +7,17 @@ const app = express();
 var server = http.createServer(app);
 var socketIO = require('socket.io');
 var io = socketIO(server);
+var mcpadc = require('mcp-spi-adc');
 const ws281x = require('../SmartAlarm/node_modules/rpi-ws281x-native/lib/ws281x-native');
 
 // API file for interacting with MongoDB
 const api = require('./server/routes/api');
 const alarm = require('./server/model/alarms');
+
+//init ADC
+var tempSensor = mcpadc.open(0, {speedHz: 20000}, function (err) {
+  if (err) throw err;
+});
 
 //Variables for LedRing
 var NUM_LEDS = 16, //Number of leds
@@ -30,6 +36,16 @@ ws281x.init(NUM_LEDS,options);  //call init function
 
 io.on('connection', (socket) => {
     console.log('user connected');
+
+    //watch ADC
+    setInterval(function () {
+      tempSensor.read(function (err, reading) {
+        if (err) throw err;
+	  var tmp = (reading.value * 3.3 - 0.5) * 100;
+          console.log((reading.value * 3.3 - 0.5) * 100);
+          socket.emit('temp', tmp); //send temperature to client
+        });
+    }, 10000);
 
     socket.on('new-message', (message) => {
       console.log(message);

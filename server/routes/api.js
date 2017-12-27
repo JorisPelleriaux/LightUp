@@ -133,13 +133,14 @@ let response = {
 // Get all alarms
 router.get('/getAlarms', function(req, res, next) {
   var searchQuery = {};
-  
+
   //load alarms from DB and create cron for it
   createTimers();
 
-  if(req.query.name)
+  if(req.query.active){
+    console.log("in zoeken naar "+req.query.active);
     searchQuery = { active: req.query.active };
-
+  }
   Alarm.find(searchQuery, function(err, alarms){
     if (err) {
       res.status(400);      
