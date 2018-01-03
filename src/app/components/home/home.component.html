@@ -2,33 +2,28 @@
   <div class="row">
     <h1>Active alarms</h1>
     <div class="col-sm-4" id="alarmFrame" *ngFor="let alarm of alarms" (click)="setEditAlarm(alarm)">
-     <div class="row">
       <div class="col-sm-6">
-	<div id="time" class="row-sm-1">
-	  <h2>{{alarm.waketime}}</h2>
-	</div>
+	<h2>{{alarm.waketime}}</h2>
       </div>
       <div class="col-sm-6">
-        <div class="row-sm-3">
-          {{alarm.active}}
-        </div>
-        <div class="row-sm-3">
-          {{alarm.duration}}
-        </div>
-        <div class="row-sm-3">
-          {{alarm.color}}
-        </div>
+      <div class="row-sm-3">
+	{{alarm.active}}
       </div>
-     </div>
-    </div>
+      <div class="row-sm-3">
+	{{alarm.duration}}
+      </div>
+      <div class="row-sm-3">
+	{{alarm.color}}
+      </div>
+      </div>
+    </div><br>
     <div class="col-sm-4">
       <h1>Temperature</h1>
       {{ tempLabel }}
-    </div>
+    </div><br>
     <div class="col-sm-4">
       <h1>Light</h1>
-      <p>Lorem ipsum dolor..</p>
-      <p>Ut enim ad..</p>
+      {{ lightLabel }}
     </div>
   </div>
 </div>

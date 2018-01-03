@@ -11,8 +11,8 @@
   <div class="card">
     <div class="card-body">
 	<p><input type="checkbox" placeholder="Active" [(ngModel)]="this.newAlarm.active" [ngModelOptions]="{standalone: true}" value="">Active</p>
-	<p>Waketime<input type="text" placeholder="08:00" [(ngModel)]="this.newAlarm.waketime" [ngModelOptions]="{standalone: true}"/>
-	<p>Waking duration<input type="text" placeholder="20:00" [(ngModel)]="this.newAlarm.duration" [ngModelOptions]="{standalone: true}"/>
+	<p>Waketime<ngb-timepicker [(ngModel)]="waketime" [ngModelOptions]="{standalone: true}"></ngb-timepicker>
+	<p>Waking duration<ngb-timepicker [(ngModel)]="durationtime" [ngModelOptions]="{standalone: true}"></ngb-timepicker>
 	<p>Select animation 
         <select (change)="selectChangeHandler($event)">
           <option value="brightness">Brightness</option>

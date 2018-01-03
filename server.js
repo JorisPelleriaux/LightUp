@@ -3,6 +3,8 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const http = require('http');
 const app = express();
+const cron = require('node-cron');
+const PythonShell = require('python-shell');
 
 var server = http.createServer(app);
 var socketIO = require('socket.io');
@@ -10,12 +12,18 @@ var io = socketIO(server);
 var mcpadc = require('mcp-spi-adc');
 const ws281x = require('../SmartAlarm/node_modules/rpi-ws281x-native/lib/ws281x-native');
 
+var DisplayOff;
+var DisplayOn;
+
 // API file for interacting with MongoDB
 const api = require('./server/routes/api');
 const alarm = require('./server/model/alarms');
 
 //init ADC
-var tempSensor = mcpadc.open(0, {speedHz: 20000}, function (err) {
+var TempSensor = mcpadc.open(0, {speedHz: 20000}, function (err) {
+  if (err) throw err;
+});
+var LightSensor = mcpadc.open(1, {speedHz: 20000}, function (err) {
   if (err) throw err;
 });
 
@@ -39,12 +47,21 @@ io.on('connection', (socket) => {
 
     //watch ADC
     setInterval(function () {
-      tempSensor.read(function (err, reading) {
+      //Read Temp sensor
+      TempSensor.read(function (err, reading) {
         if (err) throw err;
 	  var tmp = (reading.value * 3.3 - 0.5) * 100;
-          console.log((reading.value * 3.3 - 0.5) * 100);
+          console.log("Temperature: " + tmp);
           socket.emit('temp', tmp); //send temperature to client
         });
+      
+      //Read Light sensor
+      LightSensor.read(function (err, reading) {
+        if (err) throw err;
+          var lgt = reading.value;
+          console.log("Light: " + lgt);
+          socket.emit('light', lgt); //send Light value to client
+        });	
     }, 10000);
 
     socket.on('new-message', (message) => {
@@ -64,6 +81,36 @@ io.on('connection', (socket) => {
 	console.log(ColorString);
     });
 
+    socket.on('DisplayTimeEnable', (data) => {
+      split = data.split(';');
+      On = split[0].split(':');
+      Off = split[1].split(':');
+      
+      DisplayOff = cron.schedule(`${Off[1]} ${Off[0]} * * *`, function() {
+              PythonShell.run('/server/animations/DisplayOff.py', function (err) {
+ 		 if (err) throw err;
+		 console.log('turn display off');
+	      });
+            }, true);
+    
+      DisplayOn = cron.schedule(`${On[1]} ${On[0]} * * *`, function() {
+              PythonShell.run('/server/animations/DisplayOn.py', function (err) {
+                 if (err) throw err;
+                 console.log('turn display on');
+              });
+            }, true);
+
+    });
+
+    socket.on('DisplayTimeDisable', () => {
+      PythonShell.run('/server/animations/DisplayOn.py', function (err) {
+         if (err) throw err;
+         console.log('turn display on');
+      });
+
+      DisplayOff.stop();
+      DisplayOn.stop();
+    });
 });
 
 function LedsOff(){

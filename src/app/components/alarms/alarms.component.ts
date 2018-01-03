@@ -21,14 +21,14 @@ export class AlarmsComponent implements OnInit {
   searchCriteria: string;
   selectedAnimation: string = 'brightness';
   private _success = new Subject<string>();
+  waketime = {hour: 8, minute: 30};
+  durationtime = {hour: 0, minute: 30};
 
   staticAlertClosed = false;
   successMessage: string;
 
 
   public isCollapsed = true;	//Add alarm menu
-  time: NgbTimeStruct = {hour: 8, minute: 0, second: 30};	//Time input
-  duration : NgbTimeStruct = {hour: 0, minute: 8, second: 30}; 
   model = {
     right: false
   };
@@ -59,6 +59,8 @@ export class AlarmsComponent implements OnInit {
   insertAlarm() {
     this._success.next("New alarm added");
     this.newAlarm.color = this.selectedAnimation;
+    this.newAlarm.waketime = this.waketime.hour + ":" + this.waketime.minute;
+    this.newAlarm.duration = this.durationtime.hour + ":" + this.durationtime.minute;
     this.isCollapsed = true;
     this.dataService
     .insertNewAlarm(this.newAlarm)

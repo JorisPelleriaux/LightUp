@@ -18,9 +18,13 @@ export class HomeComponent implements OnInit {
   searchCriteria: boolean;
   alarms: Alarm[];
   newAlarm: Alarm;
+
   temperature: string;
   temperatures: string[] = [];
-  tempLabel: string = 'start';
+  tempLabel: string = 'measuring';
+  lightValue: string;
+  lights: string[] = [];
+  lightLabel: string = 'measuring';
   
   onChartClick(event) {
     console.log(event);
@@ -40,11 +44,21 @@ export class HomeComponent implements OnInit {
 	console.log("aantal: "+ this.temperatures.length);
 	this.refresh();
       });
+
+    this.dataService
+      .getLight()
+      .subscribe((lightValue: string) => {
+        this.lights.push(lightValue);
+        this.refresh();
+      });
   }
   
   refresh(){
 	var tempNum = Number(this.temperatures[this.temperatures.length-1]);
 	this.tempLabel = (Math.round( tempNum * 10) / 10).toString();
+
+	var lightNum = Number(this.lights[this.lights.length-1]);
+        this.lightLabel = (Math.round( lightNum * 10) / 10).toString();
   }
 
   

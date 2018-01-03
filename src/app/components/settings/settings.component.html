@@ -1,3 +1,23 @@
-<p>
-  settings works!
-</p>
+<ngb-tabset [justify]="currentJustify">
+  <ngb-tab title="Basic Settings">
+    <ng-template ngbTabContent>
+      <form action="">
+      <input type="checkbox" name="display" value="Off" (change)="change($event)" >Turn off the display between 
+      <ngb-timepicker [(ngModel)]="OffTime" [ngModelOptions]="{standalone: true}"></ngb-timepicker> And 
+      <ngb-timepicker [(ngModel)]="OnTime" [ngModelOptions]="{standalone: true}"></ngb-timepicker>
+      </form>
+    </ng-template>
+  </ngb-tab>
+  <ngb-tab title="Alarm Settings">
+    <ng-template ngbTabContent>
+      <p>alarm</p>
+    </ng-template>
+  </ngb-tab>
+  <ngb-tab title="Advanced Settings" >
+    <ng-template ngbTabContent>
+      <p>advanced</p>
+    </ng-template>
+  </ngb-tab>
+</ngb-tabset>
+
+

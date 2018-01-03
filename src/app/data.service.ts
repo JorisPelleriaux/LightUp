@@ -7,13 +7,6 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 import * as io from 'socket.io-client';
 
-
-let users= [
-{name: 'lucia'}
-];
-
-
-
 @Injectable()
 export class DataService {
   public ip = window.location.hostname;
@@ -87,6 +80,14 @@ export class DataService {
         this.socket.emit('new-message', message);
   }
 
+  public sendDisplayTimeEnable(time){
+	this.socket.emit('DisplayTimeEnable', time);
+  }
+
+  public sendDisplayTimeDisable(){
+        this.socket.emit('DisplayTimeDisable');
+  }
+
   public getTemperature = () => {
         return Observable.create((observer) => {
             this.socket.on('temp', (data) => {
@@ -94,4 +95,13 @@ export class DataService {
             });
         });
   }
+
+  public getLight = () => {
+        return Observable.create((observer) => {
+            this.socket.on('light', (data) => {
+                observer.next(data);
+            });
+        });
+  }
+
 }
