@@ -1,16 +1,39 @@
 <ngb-tabset [justify]="currentJustify">
   <ngb-tab title="Basic Settings">
     <ng-template ngbTabContent>
-      <form action="">
-      <input type="checkbox" name="display" value="Off" (change)="change($event)" >Turn off the display between 
-      <ngb-timepicker [(ngModel)]="OffTime" [ngModelOptions]="{standalone: true}"></ngb-timepicker> And 
-      <ngb-timepicker [(ngModel)]="OnTime" [ngModelOptions]="{standalone: true}"></ngb-timepicker>
-      </form>
+      <div class="container">
+        <div class="row">
+          <div class="col-md-4">
+            <form action="">
+      	      <h3>Turn off the display between</h3>
+              <input type="checkbox" name="display" value="Off" (change)="change($event)" ><br>
+              <ngb-timepicker [(ngModel)]="OffTime" [ngModelOptions]="{standalone: true}"></ngb-timepicker> And 
+              <ngb-timepicker [(ngModel)]="OnTime" [ngModelOptions]="{standalone: true}"></ngb-timepicker>
+            </form> 
+          </div>
+          <div class="col-md-4">
+	    <h3>Set snoozetime</h3>
+	    <ngb-timepicker [(ngModel)]="snoozetime" [ngModelOptions]="{standalone: true}"></ngb-timepicker>
+	    <button type="button" class="btn btn-outline-primary" (click)="insertSnoozeSettings()" aria-controls="collapseExample">Submit</button>
+          </div>
+        </div>
+      </div>
     </ng-template>
   </ngb-tab>
   <ngb-tab title="Alarm Settings">
     <ng-template ngbTabContent>
-      <p>alarm</p>
+      <div class="container">
+        <div class="row">       
+          <div class="col-sm-4">
+            <h3>Select color</h3>
+            <input [(ngModel)]="colorValue" type="color" (change)="sendColor()" id="pickColor">
+          </div>
+          <div class="col-sm-4">
+            <h3>Test light</h3>
+            <input [(ngModel)]="lightValue" type="checkbox" (change)="sendLight()">LED
+	  </div>  
+        </div>
+      </div>
     </ng-template>
   </ngb-tab>
   <ngb-tab title="Advanced Settings" >

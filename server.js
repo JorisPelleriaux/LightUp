@@ -14,7 +14,7 @@ const ws281x = require('../SmartAlarm/node_modules/rpi-ws281x-native/lib/ws281x-
 
 var DisplayOff;
 var DisplayOn;
-
+var LightOn = false;
 // API file for interacting with MongoDB
 const api = require('./server/routes/api');
 const alarm = require('./server/model/alarms');
@@ -51,7 +51,7 @@ io.on('connection', (socket) => {
       TempSensor.read(function (err, reading) {
         if (err) throw err;
 	  var tmp = (reading.value * 3.3 - 0.5) * 100;
-          console.log("Temperature: " + tmp);
+          //console.log("Temperature: " + tmp);
           socket.emit('temp', tmp); //send temperature to client
         });
       
@@ -59,7 +59,7 @@ io.on('connection', (socket) => {
       LightSensor.read(function (err, reading) {
         if (err) throw err;
           var lgt = reading.value;
-          console.log("Light: " + lgt);
+         // console.log("Light: " + lgt);
           socket.emit('light', lgt); //send Light value to client
         });	
     }, 10000);
@@ -70,15 +70,23 @@ io.on('connection', (socket) => {
     socket.on('light', (data) => {
      //console.log(data);
       if(data){
+	LightOn = true;
 	LedsOn(ColorString);   //Turn Leds on
       }
       if(!data){
+	LightOn = false;
         LedsOff();   //Turn Leds off
       }
     });
     socket.on('color', (data) => {
-        ColorString = data.replace('#','0x');
-	console.log(ColorString);
+	if(LightOn){
+	  ColorString = data.replace('#','0x');
+	  LedsOn(ColorString);   //Turn Leds on
+	}
+	if(!LightOn){
+          ColorString = data.replace('#','0x');
+          console.log(ColorString);
+	}
     });
 
     socket.on('DisplayTimeEnable', (data) => {
@@ -111,6 +119,10 @@ io.on('connection', (socket) => {
       DisplayOff.stop();
       DisplayOn.stop();
     });
+
+   socket.on('SnoozeTime', () => {
+
+   });
 });
 
 function LedsOff(){

@@ -9,14 +9,14 @@ var mongoose = require('mongoose'); //mongo connection
 var bodyParser = require('body-parser'); //parses information from POST
 var methodOverride = require('method-override'); //used to manipulate POST
 var Alarm = require('../model/alarms');
+var Snooze = require('../model/snooze');
 const ws281x = require('../../node_modules/rpi-ws281x-native/lib/ws281x-native');
 var url = "mongodb://localhost:27017/mean";
 var res = [];
 var cron = require('node-cron');
 var myVariables = [];
-const brightness = require('../animations/brightness');
-const iterate = require('../animations/iterate');
-const rainbow = require('../animations/rainbow');
+const controller = require('../animations/Controller');
+var SnoozeTime;
 
 //Variables for LedRing
 var NUM_LEDS = 16, //Number of leds
@@ -43,11 +43,22 @@ ws281x.render(pixelData);
 
 
 function createTimers(){
+  MongoClient.connect(url, function(err, db) {
+    if (err) throw err;
+    db.collection("snoozes").find({}).toArray(function(err, result) {
+      if (err) throw err;
+      var data = result[result.length-1].snoozetime.split(':');
+      SnoozeTime = (data[0] * 3600000) + (data[1] * 60000);
+      db.close();
+    });
+  });
+
   myVariables = [];
   MongoClient.connect(url, function(err, db) {
   if (err) throw err;
   db.collection("alarms").find({}).toArray(function(err, result) {
     if (err) throw err;
+    var i = 0;
     for (var x = 0;x<result.length;x++){
       var data = result[x];
       var name = data._id;
@@ -56,43 +67,15 @@ function createTimers(){
       var time = data.waketime.split(':')
       var h = parseInt(time[0], 10);
       var m = parseInt(time[1], 10);
-      switch(color) {
-      case "brightness":
 	  if (active == true){
-            myVariables[name] = cron.schedule(`${m} ${h} * * *`, function() {
-              console.log('brightness started'+active);
-              brightness.run();
+	    myVariables[i] = "alarm" +i;
+            this[myVariables[i]] = cron.schedule(`${m} ${h} * * *`, function() {
+              controller.run(SnoozeTime, color);
             }, true);
-          console.log(`${x}'ste alarm om ${h}:${m}, id: ${name}, animatie: brightness en active: ${active}`);
-	  }
-          break;
-      case "iterate":
-  	  if (active == true){        
-	    myVariables[name] = cron.schedule(`${m} ${h} * * *`, function() {
-              console.log('iterate started'+active);
-              iterate.run();
-            }, true);
-	  console.log(`${x}'ste alarm om ${h}:${m}, id: ${name}, animatie: iterate en active: ${active}`);
-   	  }
-          break;
-      case "rainbow":
-	  if (active == true){
-            myVariables[name] = cron.schedule(`${m} ${h} * * *`, function() {
-              console.log('rainbow started'+active);
-              rainbow.run();
-            }, true);
- 	  console.log(`${x}'ste alarm om ${h}:${m}, id: ${name}, animatie: rainbow en active: ${active}`);
-          }
-          break;
-      default:
-	  if (active == true){
-            myVariables[name] = cron.schedule(`${m} ${h} * * *`,function() {
-              console.log('default started');
-              rainbow.run();
-            }, true);
-	  console.log(`${x}'ste alarm om ${h}:${m}, id: ${name}, animatie: default en active: ${active}`);
-   	  }
-      }
+	  
+            console.log(`${x}'ste alarm om ${h}:${m}, id: ${name}, animatie: ${color} en active: ${active} en naam: ${myVariables[i]}`);
+	  i++;  
+	}
     }
     db.close();
     });
@@ -107,6 +90,18 @@ io.on('connection', function (socket) {
     });
 
 });
+
+function RefreshTimers(){
+  //stop crons
+  for(i=0;i<myVariables.length;i++){
+    console.log('stop '+ myVariables[i]);
+    this[myVariables[i]].stop();
+  }
+
+  //load alarms from DB and create cron for it
+  createTimers();
+
+}
 
 // Connect
 var mongoDB = 'mongodb://127.0.0.1/mean';
@@ -190,17 +185,11 @@ router.post('/deleteAlarm', function(req, res, next) {
     console.log("removed!");
     res.send({status: 'ok'});
   });
-
-//delete cron from array
-const index = myVariables.indexOf(req.body.id);
-myVariables.splice(index, 1);
-
-//stop cron
-if (req.body.active == true){
-myVariables[req.body.id].stop();
+  
+  RefreshTimers();
 
 console.log("delete alarm, id: " + req.body.id);
-}
+
 });
 
 //Update alarm
@@ -219,6 +208,28 @@ router.post('/updateAlarm', function(req, res, next) {
   });
 //load alarms from DB and create cron for it
   createTimers();
+});
+
+// Insert snooze setting
+router.post('/insertSnoozeSetting', function(req, res, next) {
+  var newSnooze = new Snooze(req.body);
+  newSnooze._id = mongoose.Types.ObjectId();
+
+  newSnooze.save(function(err) {
+    if (err) {
+      console.log("not saved!");
+      res.status(400);
+      res.send();
+    }
+
+    console.log("saved!");
+    res.send({ id : newSnooze._id });
+  });
+
+  RefreshTimers();
+
+  console.log("insert snooze settings, id: " + newSnooze._id);
+
 });
 
 module.exports = router;

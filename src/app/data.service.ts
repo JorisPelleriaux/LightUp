@@ -3,6 +3,7 @@ import { Http, Headers, RequestOptions,URLSearchParams  } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import { Alarm } from './model/alarm';
+import { Snooze } from './model/snooze';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 import * as io from 'socket.io-client';
@@ -68,12 +69,23 @@ export class DataService {
             }); 
   }
 
+  insertNewSnoozeSettings(snooze:Snooze): Observable<any>{
+        return this._http.post(this.url + "/insertSnoozeSetting", snooze)
+            .map((res:any) => {
+                return res.json();
+            })
+            .catch((error:any) => {
+                console.log(error);
+                return Observable.throw(error.json ? error.json().error : error || 'Server error')
+            });
+  }
+
   public sendColor(data){
-        this.socket.emit("color", data); //send push button status to back to server
+        this.socket.emit("color", data); //send color value to server
   }
 
   public sendLight(data){
-	this.socket.emit("light", data); //send push button status to back to server
+	this.socket.emit("light", data); //send checkbox status to back to server
   }
 
   public sendMessage(message) {
@@ -86,6 +98,10 @@ export class DataService {
 
   public sendDisplayTimeDisable(){
         this.socket.emit('DisplayTimeDisable');
+  }
+
+  public sendSnoozeTime(time){
+	this.socket.emit('SnoozeTime', time);
   }
 
   public getTemperature = () => {

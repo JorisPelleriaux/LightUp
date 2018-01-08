@@ -6,10 +6,6 @@ import subprocess
 
 from Adafruit_LED_Backpack import SevenSegment
 
-#Get ip
-ipaddr = subprocess.check_output(['hostname', '-I'])
-ipsplit = ipaddr.split(' ')
-ipv4 = ipsplit[0].split('.')
 inittime = 0
 # ===========================================================================
 # Clock Example
@@ -35,7 +31,12 @@ segment.set_digit_raw(2, 0x5C)
 segment.set_digit_raw(3, 0x78)
 segment.set_colon(colon)
 segment.write_display()
-time.sleep(15.0)
+time.sleep(5.0)
+
+#Get ip
+ipaddr = subprocess.check_output(['hostname', '-I'])
+ipsplit = ipaddr.split(' ')
+ipv4 = ipsplit[0].split('.')
 
 #Print ip address 3x
 print ipsplit[0]
@@ -50,6 +51,15 @@ while(inittime<10):
 	    time.sleep(1.0)
 	except ValueError:
             print "Could not convert data to an integer."
+	    print ipsplit[0]
+	    segment.clear()
+ 	    segment.set_digit_raw(0, 0x54)
+	    segment.set_digit_raw(1, 0x5C)
+	    segment.set_digit_raw(2, 0x6)
+	    segment.set_digit_raw(3, 0x73)
+	    segment.set_colon(colon)
+	    segment.write_display()
+	 
 	else:
 	    print "other error"
 	 #   segment.clear()
