@@ -9,18 +9,18 @@
 # LightUp
 Wake up with light
 
-![Front](https://github.com/JorisPelleriaux/LightUp/Media/Front.jpg)
-![Back](https://github.com/JorisPelleriaux/LightUp/Media/Back.jpg)
-![Homepage](https://github.com/JorisPelleriaux/LightUp/Media/Homepage.png)
-![Alarms](https://github.com/JorisPelleriaux/LightUp/Media/Alarms.png)
+![Front](https://github.com/JorisPelleriaux/LightUp/blob/master/Media/Front.jpg)
+![Back](https://github.com/JorisPelleriaux/LightUp/blob/master/Media/Back.jpg)
+![Homepage](https://github.com/JorisPelleriaux/LightUp/blob/master/Media/Homepage.png)
+![Alarms](https://github.com/JorisPelleriaux/LightUp/blob/master/Media/Alarms.png)
 
 ## Build
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `-prod` flag for a production build.
+Run 'ng build' to build the project. The build artifacts will be stored in the 'dist/' directory. Use the '-prod' flag for a production build.
 
 ## Running server
 
-run sudo node server -> server running on port 3000
+run 'sudo node server' -> server running on port 3000
 
 ## Clock for Adafruit 7-Segment Backpack  
 
