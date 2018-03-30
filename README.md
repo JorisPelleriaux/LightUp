@@ -7,28 +7,20 @@
 ![socket.io-client version](https://img.shields.io/badge/Socket.io_version-v2.0.4-000000.svg)
 
 # LightUp
+Wake up with light
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.6.1.
-
-## Development server
-
-Run `ng serve` for a dev server. Navigate to `http://localhost:3000/`. The app will automatically reload if you change any of the source files.
-
-## Code scaffolding
-
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+![Front](https://github.com/JorisPelleriaux/LightUp/Media/Front.jpg)
+![Back](https://github.com/JorisPelleriaux/LightUp/Media/Back.jpg)
+![Homepage](https://github.com/JorisPelleriaux/LightUp/Media/Homepage.png)
+![Alarms](https://github.com/JorisPelleriaux/LightUp/Media/Alarms.png)
 
 ## Build
 
 Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `-prod` flag for a production build.
 
-## Running unit tests
+## Running server
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+run sudo node server -> server running on port 3000
 
 ## Clock for Adafruit 7-Segment Backpack  
 
