@@ -9,8 +9,8 @@
 # LightUp
 Wake up with light
 
-![](https://github.com/JorisPelleriaux/LightUp/blob/master/Media/Front.JPG | width=250)
-![](https://github.com/JorisPelleriaux/LightUp/blob/master/Media/Back.jpg | width=250)
+![](https://github.com/JorisPelleriaux/LightUp/blob/master/Media/Front.JPG)
+![](https://github.com/JorisPelleriaux/LightUp/blob/master/Media/Back.jpg)
 ![Homepage](https://github.com/JorisPelleriaux/LightUp/blob/master/Media/Homepage.png)
 ![Alarms](https://github.com/JorisPelleriaux/LightUp/blob/master/Media/Alarms.png)
 
